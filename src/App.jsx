@@ -35,10 +35,15 @@ import {
   Smartphone,
   Shield,
   CheckCircle2,
-  ChevronRight
+  ChevronRight,
+  Sun,
+  Moon
 } from "lucide-react";
 
 export default function App() {
+  const [theme, setTheme] = useState("dark");
+  const isDark = theme === "dark";
+
   const [activeTab, setActiveTab] = useState("overview");
   const [anomalyActive, setAnomalyActive] = useState(false);
   const [copiedFingerprint, setCopiedFingerprint] = useState(false);
@@ -364,7 +369,7 @@ export default function App() {
     return log.level === logFilter;
   });
 
-  // 11 Core Navigation Tabs
+  // Navigation Tabs
   const navTabs = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "devices", label: "Devices", icon: Cpu, badge: devices.length },
@@ -379,24 +384,43 @@ export default function App() {
     { id: "profile", label: "Profile", icon: User }
   ];
 
+  // System Theme Classes Mapping
+  const t = {
+    canvas: isDark ? "bg-[#09090b] text-zinc-100" : "bg-slate-50 text-slate-900",
+    header: isDark ? "bg-[#0c0c0e] border-[#27272a]" : "bg-white border-slate-200 text-slate-800 shadow-xs",
+    sidebar: isDark ? "bg-[#0c0c0e] border-[#27272a]" : "bg-white border-slate-200 text-slate-700 shadow-xs",
+    card: isDark ? "bg-[#121215] border-[#27272a] shadow-sm" : "bg-white border-slate-200 text-slate-800 shadow-sm",
+    cardSub: isDark ? "bg-[#09090b] border-zinc-800 text-zinc-200" : "bg-slate-50 border-slate-200 text-slate-800",
+    subtext: isDark ? "text-zinc-400" : "text-slate-500",
+    muted: isDark ? "text-zinc-500" : "text-slate-400",
+    border: isDark ? "border-[#27272a]" : "border-slate-200",
+    navActive: isDark ? "bg-zinc-800 text-white font-semibold shadow-sm" : "bg-slate-100 text-slate-900 font-semibold shadow-xs",
+    navInactive: isDark ? "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-850/60" : "text-slate-600 hover:text-slate-900 hover:bg-slate-100",
+    input: isDark ? "bg-[#09090b] border-zinc-800 text-zinc-200 focus:border-violet-500" : "bg-slate-50 border-slate-200 text-slate-800 focus:border-violet-600",
+    tableHead: isDark ? "bg-[#0c0c0e] text-zinc-400" : "bg-slate-50 text-slate-600",
+    tableHover: isDark ? "hover:bg-zinc-850/30" : "hover:bg-slate-50/80",
+    divider: isDark ? "divide-[#27272a]" : "divide-slate-200",
+    badgeZinc: isDark ? "bg-zinc-800 text-zinc-300 border-zinc-700" : "bg-slate-100 text-slate-700 border-slate-200"
+  };
+
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#09090b] text-zinc-100 font-sans antialiased">
+    <div className={`flex h-screen w-screen overflow-hidden font-sans antialiased transition-colors duration-200 ${t.canvas}`}>
       {/* SIDEBAR NAVIGATION */}
-      <aside className="w-64 flex-shrink-0 border-r border-[#27272a] bg-[#0c0c0e] flex flex-col justify-between p-3.5">
+      <aside className={`w-64 flex-shrink-0 border-r flex flex-col justify-between p-3.5 transition-colors duration-200 ${t.sidebar}`}>
         <div className="space-y-4">
           {/* Platform Branding */}
           <div className="flex items-center space-x-3 px-2 py-1">
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shadow-sm">
-              <ShieldCheck className="w-4 h-4 text-violet-400" />
+            <div className={`w-8 h-8 rounded-lg border flex items-center justify-center shadow-sm ${isDark ? "bg-zinc-800 border-zinc-700" : "bg-slate-100 border-slate-300"}`}>
+              <ShieldCheck className="w-4 h-4 text-violet-600" />
             </div>
             <div>
-              <div className="font-bold text-sm tracking-tight text-white flex items-center space-x-1.5">
+              <div className="font-bold text-sm tracking-tight flex items-center space-x-1.5">
                 <span>AuthSphere</span>
-                <span className="text-[10px] font-mono px-1 rounded bg-violet-950 text-violet-300 border border-violet-800/50">
+                <span className={`text-[10px] font-mono px-1 rounded border font-semibold ${isDark ? "bg-violet-950 text-violet-300 border-violet-800/50" : "bg-violet-50 text-violet-700 border-violet-200"}`}>
                   v2.4
                 </span>
               </div>
-              <div className="text-[10px] text-zinc-400 font-medium">
+              <div className={`text-[10px] font-medium ${t.muted}`}>
                 Zero-Trust Attestation Core
               </div>
             </div>
@@ -413,28 +437,26 @@ export default function App() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                    isActive
-                      ? "bg-zinc-800 text-white font-semibold shadow-sm"
-                      : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-850/60"
+                    isActive ? t.navActive : t.navInactive
                   }`}
                 >
                   <div className="flex items-center space-x-2.5">
                     <Icon
                       className={`w-4 h-4 ${
-                        isActive ? "text-violet-400" : "text-zinc-500"
+                        isActive ? "text-violet-600" : t.muted
                       }`}
                     />
                     <span>{tab.label}</span>
                   </div>
 
                   {tab.badge !== undefined && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                    <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${t.badgeZinc}`}>
                       {tab.badge}
                     </span>
                   )}
 
                   {tab.alertCount !== undefined && tab.alertCount > 0 && (
-                    <span className="px-1.5 py-0.2 text-[10px] font-bold rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
+                    <span className="px-1.5 py-0.2 text-[10px] font-bold rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/40 animate-pulse">
                       {tab.alertCount}
                     </span>
                   )}
@@ -447,20 +469,20 @@ export default function App() {
         {/* User Profile Footer Card */}
         <div
           onClick={() => setActiveTab("profile")}
-          className="p-3 rounded-xl border border-[#27272a] bg-[#121215] cursor-pointer hover:border-zinc-700 transition-colors"
+          className={`p-3 rounded-xl border cursor-pointer hover:border-zinc-500 transition-colors ${t.card}`}
         >
           <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-xs text-zinc-200">
+            <div className={`w-8 h-8 rounded-lg border flex items-center justify-center font-bold text-xs ${isDark ? "bg-zinc-800 border-zinc-700 text-zinc-200" : "bg-slate-100 border-slate-300 text-slate-800"}`}>
               {getInitials(profileData.fullName)}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-semibold text-zinc-200 truncate">
+              <div className="text-xs font-semibold truncate">
                 {profileData.fullName}
               </div>
-              <div className="text-[10px] text-zinc-400 font-mono truncate">
+              <div className={`text-[10px] font-mono truncate ${t.muted}`}>
                 {profileData.email}
               </div>
-              <div className="text-[9px] text-emerald-400 font-mono mt-0.5">
+              <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono mt-0.5 font-medium">
                 ● Hardware Token Active
               </div>
             </div>
@@ -471,26 +493,43 @@ export default function App() {
       {/* MAIN VIEWPORT */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* TOP BAR */}
-        <header className="h-14 border-b border-[#27272a] bg-[#0c0c0e] px-8 flex items-center justify-between flex-shrink-0">
+        <header className={`h-14 border-b px-8 flex items-center justify-between flex-shrink-0 transition-colors duration-200 ${t.header}`}>
           <div className="flex items-center space-x-3">
-            <span className="text-xs font-medium text-zinc-400">Environment:</span>
-            <span className="text-xs font-mono text-zinc-200 bg-zinc-800 px-2 py-0.5 rounded border border-zinc-700">
+            <span className={`text-xs font-medium ${t.subtext}`}>Environment:</span>
+            <span className={`text-xs font-mono px-2 py-0.5 rounded border ${t.badgeZinc}`}>
               ap-south-1 / SecureNodeX Mesh
             </span>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3.5">
             {/* Quick Search */}
             <div className="relative hidden md:block">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-zinc-500" />
+              <Search className={`w-3.5 h-3.5 absolute left-3 top-2.5 ${t.muted}`} />
               <input
                 type="text"
                 placeholder="Search nodes, SKUs, IPs..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1 rounded-md bg-[#141417] border border-[#27272a] text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-600 w-52"
+                className={`pl-8 pr-3 py-1 rounded-md text-xs placeholder-zinc-500 focus:outline-none w-48 transition-colors ${t.input}`}
               />
             </div>
+
+            {/* Dark / Light Mode Toggle Button */}
+            <button
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              className={`p-1.5 rounded-lg border text-xs flex items-center space-x-1.5 transition-colors ${
+                isDark
+                  ? "bg-[#141417] border-[#27272a] text-zinc-300 hover:text-white hover:bg-zinc-800"
+                  : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 shadow-xs"
+              }`}
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-700" />
+              )}
+            </button>
 
             {/* Attack Trigger Button */}
             {anomalyActive ? (
@@ -521,71 +560,71 @@ export default function App() {
               {/* 4 Clean Metric Tiles */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Attestation */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] shadow-sm">
-                  <div className="text-xs text-zinc-400 font-medium">Fleet Attestation</div>
+                <div className={`p-5 rounded-xl border ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>Fleet Attestation</div>
                   <div className="mt-2 flex items-center space-x-2">
-                    <span className="text-2xl font-bold font-mono text-white">
+                    <span className="text-2xl font-bold font-mono">
                       {anomalyActive ? "84.20%" : "99.98%"}
                     </span>
                     <span
                       className={`w-2 h-2 rounded-full ${
-                        anomalyActive ? "bg-rose-500 animate-pulse" : "bg-emerald-400"
+                        anomalyActive ? "bg-rose-500 animate-pulse" : "bg-emerald-500"
                       }`}
                     />
                   </div>
-                  <div className="mt-1 text-[11px] text-zinc-500">
+                  <div className={`mt-1 text-[11px] ${t.muted}`}>
                     {anomalyActive ? "Degraded • 1 Node Quarantined" : "All Nodes Verified"}
                   </div>
                 </div>
 
                 {/* Active Fleet */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] shadow-sm">
-                  <div className="text-xs text-zinc-400 font-medium">Active Fleet</div>
-                  <div className="mt-2 text-2xl font-bold font-mono text-white">
+                <div className={`p-5 rounded-xl border ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>Active Fleet</div>
+                  <div className="mt-2 text-2xl font-bold font-mono">
                     {activeCount} / {devices.length} Nodes
                   </div>
-                  <div className="mt-1 text-[11px] text-zinc-500">
+                  <div className={`mt-1 text-[11px] ${t.muted}`}>
                     Connected &amp; mTLS Attested
                   </div>
                 </div>
 
                 {/* Broker Quarantine */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] shadow-sm">
-                  <div className="text-xs text-zinc-400 font-medium">Broker Quarantine</div>
+                <div className={`p-5 rounded-xl border ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>Broker Quarantine</div>
                   <div
                     className={`mt-2 text-2xl font-bold font-mono ${
-                      anomalyActive ? "text-rose-400 animate-pulse" : "text-emerald-400"
+                      anomalyActive ? "text-rose-500 animate-pulse" : "text-emerald-600 dark:text-emerald-400"
                     }`}
                   >
                     {anomalyActive ? "1 CRITICAL" : "0 Active"}
                   </div>
-                  <div className="mt-1 text-[11px] text-zinc-500">
+                  <div className={`mt-1 text-[11px] ${t.muted}`}>
                     Mosquitto Port 8883 ACL
                   </div>
                 </div>
 
                 {/* Crypto Overhead */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] shadow-sm">
-                  <div className="text-xs text-zinc-400 font-medium">Crypto Overhead</div>
+                <div className={`p-5 rounded-xl border ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>Crypto Overhead</div>
                   <div className="mt-2 flex items-baseline space-x-2">
-                    <span className="text-2xl font-bold font-mono text-violet-300">
+                    <span className="text-2xl font-bold font-mono text-violet-600 dark:text-violet-300">
                       34.2 ms
                     </span>
-                    <span className="text-xs text-zinc-500 font-mono">vs 418.0 ms</span>
+                    <span className={`text-xs font-mono ${t.muted}`}>vs 418.0 ms</span>
                   </div>
-                  <div className="mt-1 text-[11px] text-emerald-400 font-medium">
+                  <div className="mt-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
                     91.8% Lower than RSA
                   </div>
                 </div>
               </div>
 
               {/* Cryptographic Benchmark Comparison */}
-              <div className="p-6 rounded-xl bg-[#121215] border border-[#27272a] space-y-4 shadow-sm">
+              <div className={`p-6 rounded-xl border space-y-4 ${t.card}`}>
                 <div>
-                  <h2 className="text-sm font-semibold text-white">
+                  <h2 className="text-sm font-semibold">
                     Cryptographic Handshake Benchmark
                   </h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <p className={`text-xs mt-0.5 ${t.subtext}`}>
                     AuthSphere ECC-secp256r1 vs Legacy RSA-2048 execution on Espressif silicon.
                   </p>
                 </div>
@@ -593,14 +632,14 @@ export default function App() {
                 <div className="space-y-4 pt-1">
                   <div>
                     <div className="flex justify-between text-xs mb-1.5">
-                      <span className="font-medium text-zinc-200">
+                      <span className="font-medium">
                         AuthSphere NIST P-256 (34.2 ms • 4.2 KB RAM)
                       </span>
-                      <span className="font-mono text-emerald-400 font-semibold">
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                         91.8% Faster
                       </span>
                     </div>
-                    <div className="w-full h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-0.5">
+                    <div className={`w-full h-3 rounded-full overflow-hidden border p-0.5 ${isDark ? "bg-zinc-900 border-zinc-800" : "bg-slate-100 border-slate-200"}`}>
                       <div
                         className="h-full bg-gradient-to-r from-emerald-500 to-violet-500 rounded-full"
                         style={{ width: "8.2%" }}
@@ -610,21 +649,21 @@ export default function App() {
 
                   <div>
                     <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-zinc-400">
+                      <span className={t.subtext}>
                         Legacy RSA-2048 (418.0 ms • 38.6 KB RAM)
                       </span>
-                      <span className="font-mono text-zinc-500">Deprecated</span>
+                      <span className={`font-mono ${t.muted}`}>Deprecated</span>
                     </div>
-                    <div className="w-full h-3 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800 p-0.5">
+                    <div className={`w-full h-3 rounded-full overflow-hidden border p-0.5 ${isDark ? "bg-zinc-900 border-zinc-800" : "bg-slate-100 border-slate-200"}`}>
                       <div
-                        className="h-full bg-zinc-700 rounded-full"
+                        className="h-full bg-zinc-400 dark:bg-zinc-700 rounded-full"
                         style={{ width: "100%" }}
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-zinc-800 text-xs text-zinc-400 flex flex-wrap items-center gap-x-5 gap-y-1 font-mono">
+                <div className={`pt-3 border-t text-xs flex flex-wrap items-center gap-x-5 gap-y-1 font-mono ${t.border} ${t.subtext}`}>
                   <span>• 64B public key vs 256B (75% bandwidth reduction)</span>
                   <span>• 4.2 KB RAM footprint (9x lower than RSA)</span>
                   <span>• 42,000 CPU cycles on ESP32 (12x computational release)</span>
@@ -632,15 +671,15 @@ export default function App() {
               </div>
 
               {/* Real-time Ingestion Stream Feed */}
-              <div className="p-6 rounded-xl bg-[#121215] border border-[#27272a] space-y-3 shadow-sm">
+              <div className={`p-6 rounded-xl border space-y-3 ${t.card}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <Terminal className="w-4 h-4 text-zinc-400" />
-                    <span className="text-xs font-semibold text-white uppercase tracking-wider">
+                    <Terminal className={`w-4 h-4 ${t.muted}`} />
+                    <span className="text-xs font-semibold uppercase tracking-wider">
                       Real-Time SOC Ingestion Feed
                     </span>
                   </div>
-                  <span className="text-[11px] font-mono text-zinc-500">
+                  <span className={`text-[11px] font-mono ${t.muted}`}>
                     Active Telemetry Tail
                   </span>
                 </div>
@@ -651,22 +690,26 @@ export default function App() {
                       key={log.id}
                       className={`p-3 rounded-lg border text-xs font-mono flex items-start space-x-3 ${
                         log.level === "CRITICAL"
-                          ? "bg-rose-950/25 border-rose-900/50 text-rose-200"
-                          : "bg-[#0e0e10] border-zinc-800/80 text-zinc-300"
+                          ? "bg-rose-950/25 border-rose-900/50 text-rose-300 dark:text-rose-200"
+                          : isDark
+                          ? "bg-[#0e0e10] border-zinc-800/80 text-zinc-300"
+                          : "bg-slate-50 border-slate-200 text-slate-800"
                       }`}
                     >
-                      <span className="text-zinc-500 flex-shrink-0">[{log.time}]</span>
+                      <span className={`flex-shrink-0 ${t.muted}`}>[{log.time}]</span>
                       <span
                         className={`px-1.5 py-0.2 rounded font-bold text-[10px] flex-shrink-0 ${
                           log.level === "CRITICAL"
                             ? "bg-rose-600 text-white animate-pulse"
-                            : "bg-zinc-800 text-zinc-300"
+                            : isDark
+                            ? "bg-zinc-800 text-zinc-300"
+                            : "bg-slate-200 text-slate-800"
                         }`}
                       >
                         {log.level}
                       </span>
-                      <span className="text-zinc-400 flex-shrink-0">[{log.source}]</span>
-                      <span className="text-zinc-200 flex-1">{log.message}</span>
+                      <span className={`flex-shrink-0 font-medium ${t.subtext}`}>[{log.source}]</span>
+                      <span className="flex-1">{log.message}</span>
                     </div>
                   ))}
                 </div>
@@ -678,19 +721,19 @@ export default function App() {
           {activeTab === "devices" && (
             <div className="space-y-5 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">
+                <h2 className="text-base font-semibold">
                   SecureNodeX Edge Fleet Inventory
                 </h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Connected microcontroller nodes verified with hardware attestation.
                 </p>
               </div>
 
               {/* Table */}
-              <div className="rounded-xl border border-[#27272a] bg-[#121215] overflow-hidden shadow-sm">
+              <div className={`rounded-xl border overflow-hidden ${t.card}`}>
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-[#27272a] bg-[#0c0c0e] text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
+                    <tr className={`border-b text-[11px] font-medium uppercase tracking-wider ${t.border} ${t.tableHead}`}>
                       <th className="py-3 px-5">Node Identifier</th>
                       <th className="py-3 px-4">Hardware SKU</th>
                       <th className="py-3 px-4">Network IP</th>
@@ -700,7 +743,7 @@ export default function App() {
                       <th className="py-3 px-5 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#27272a]">
+                  <tbody className={`divide-y ${t.divider}`}>
                     {filteredDevices.map((dev) => {
                       const isQuarantined = dev.status === "QUARANTINED";
                       const isRevoked = dev.status === "REVOKED";
@@ -709,37 +752,35 @@ export default function App() {
                       return (
                         <tr
                           key={dev.id}
-                          className={`hover:bg-zinc-850/30 transition-colors ${
+                          className={`transition-colors ${t.tableHover} ${
                             isQuarantined ? "bg-rose-950/20" : ""
                           }`}
                         >
-                          <td className="py-3.5 px-5 font-mono font-semibold text-zinc-200">
+                          <td className="py-3.5 px-5 font-mono font-semibold">
                             {dev.id}
                           </td>
-                          <td className="py-3.5 px-4 text-zinc-300">
+                          <td className="py-3.5 px-4">
                             <div>{dev.sku}</div>
-                            <div className="text-[10px] text-zinc-500 font-mono">{dev.arch}</div>
+                            <div className={`text-[10px] font-mono ${t.muted}`}>{dev.arch}</div>
                           </td>
-                          <td className="py-3.5 px-4 font-mono text-zinc-400">
+                          <td className={`py-3.5 px-4 font-mono ${t.subtext}`}>
                             {dev.ip}
                           </td>
-                          <td className="py-3.5 px-4 font-mono text-zinc-400">
+                          <td className={`py-3.5 px-4 font-mono ${t.subtext}`}>
                             {dev.protocol}
                           </td>
                           <td className="py-3.5 px-4">
-                            <div className="flex items-center space-x-2">
-                              <span
-                                className={`font-mono font-semibold ${
-                                  dev.trustScore > 75
-                                    ? "text-emerald-400"
-                                    : dev.trustScore > 0
-                                    ? "text-rose-400"
-                                    : "text-zinc-500"
-                                }`}
-                              >
-                                {dev.trustScore}%
-                              </span>
-                            </div>
+                            <span
+                              className={`font-mono font-semibold ${
+                                dev.trustScore > 75
+                                  ? "text-emerald-600 dark:text-emerald-400"
+                                  : dev.trustScore > 0
+                                  ? "text-rose-500"
+                                  : t.muted
+                              }`}
+                            >
+                              {dev.trustScore}%
+                            </span>
                           </td>
                           <td className="py-3.5 px-4">
                             {isActive && (
@@ -755,19 +796,19 @@ export default function App() {
                               </span>
                             )}
                             {isRevoked && (
-                              <span className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-900 text-zinc-500 border border-zinc-800">
-                                <XCircle className="w-3 h-3 text-zinc-500" />
+                              <span className={`inline-flex items-center space-x-1.5 px-2 py-0.5 rounded text-[11px] font-medium border ${isDark ? "bg-zinc-900 text-zinc-500 border-zinc-800" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
+                                <XCircle className="w-3 h-3" />
                                 <span>REVOKED</span>
                               </span>
                             )}
                           </td>
                           <td className="py-3.5 px-5 text-right">
                             {isRevoked ? (
-                              <span className="text-[11px] font-mono text-zinc-600">IN CRL</span>
+                              <span className={`text-[11px] font-mono ${t.muted}`}>IN CRL</span>
                             ) : (
                               <button
                                 onClick={() => handleRevokeDevice(dev.id)}
-                                className="px-2.5 py-1 text-xs rounded bg-zinc-800 hover:bg-rose-950 hover:text-rose-300 border border-zinc-700 hover:border-rose-800 transition-colors"
+                                className={`px-2.5 py-1 text-xs rounded border transition-colors ${isDark ? "bg-zinc-800 hover:bg-rose-950 hover:text-rose-300 border-zinc-700 hover:border-rose-800" : "bg-slate-100 hover:bg-rose-50 hover:text-rose-600 border-slate-300 hover:border-rose-200"}`}
                               >
                                 Revoke
                               </button>
@@ -786,63 +827,63 @@ export default function App() {
           {activeTab === "authentication" && (
             <div className="space-y-6 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">
+                <h2 className="text-base font-semibold">
                   AuthSphere Micro-PKI Architecture
                 </h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   ECDHE secp256r1 keys, rolling challenge nonces, and hardware mutual authentication.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Fingerprint */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
-                  <div className="text-xs text-zinc-400 font-medium">Root Public Key Digest</div>
-                  <div className="p-2.5 rounded bg-[#09090b] border border-zinc-800 text-[11px] font-mono text-zinc-300 flex items-center justify-between">
+                <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>Root Public Key Digest</div>
+                  <div className={`p-2.5 rounded border text-[11px] font-mono flex items-center justify-between ${t.cardSub}`}>
                     <span className="truncate mr-2">sha256:8f2a...c0147e92</span>
                     <button
                       onClick={copyFingerprint}
-                      className="text-zinc-400 hover:text-white transition-colors"
+                      className="hover:text-violet-500 transition-colors"
                     >
                       {copiedFingerprint ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3.5 h-3.5 text-emerald-500" />
                       ) : (
                         <Copy className="w-3.5 h-3.5" />
                       )}
                     </button>
                   </div>
-                  <div className="text-[11px] text-zinc-500 font-mono">
+                  <div className={`text-[11px] font-mono ${t.muted}`}>
                     Algorithm: ECDSA-secp256r1
                   </div>
                 </div>
 
                 {/* Rolling Ephemeral Token */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
-                  <div className="text-xs text-zinc-400 font-medium">Ephemeral Challenge TTL</div>
-                  <div className="text-2xl font-bold font-mono text-white">
-                    {tokenTTL}s <span className="text-xs text-zinc-500 font-normal">/ 180s</span>
+                <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>Ephemeral Challenge TTL</div>
+                  <div className="text-2xl font-bold font-mono">
+                    {tokenTTL}s <span className={`text-xs font-normal ${t.muted}`}>/ 180s</span>
                   </div>
-                  <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden">
+                  <div className={`h-1.5 w-full rounded-full overflow-hidden ${isDark ? "bg-zinc-900" : "bg-slate-200"}`}>
                     <div
                       className="h-full bg-violet-500 rounded-full transition-all duration-1000"
                       style={{ width: `${(tokenTTL / 180) * 100}%` }}
                     />
                   </div>
-                  <div className="text-[11px] text-zinc-500 font-mono">
+                  <div className={`text-[11px] font-mono ${t.muted}`}>
                     HMAC-SHA256 Rolling Challenge Nonce
                   </div>
                 </div>
 
                 {/* Broker Enforcement */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
-                  <div className="text-xs text-zinc-400 font-medium">mTLS Transport Guard</div>
-                  <div className="text-sm font-semibold text-white font-mono">
+                <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
+                  <div className={`text-xs font-medium ${t.subtext}`}>mTLS Transport Guard</div>
+                  <div className="text-sm font-semibold font-mono">
                     Strict Client Cert Required
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className={`text-xs ${t.subtext}`}>
                     ACL-403 blocks untrusted nodes at TCP layer before broker queue.
                   </p>
-                  <div className="text-[11px] text-emerald-400 font-mono">
+                  <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono font-medium">
                     Port 8883 (Active Enforced)
                   </div>
                 </div>
@@ -854,18 +895,18 @@ export default function App() {
           {activeTab === "prevention" && (
             <div className="space-y-5 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">
+                <h2 className="text-base font-semibold">
                   Nakshatra AI Threat Interceptor
                 </h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Gemini 2.0 Flash Deep Packet Inspection (DPI) &amp; DLP regex filtering engine.
                 </p>
               </div>
 
               {/* Inspection Stream */}
-              <div className="rounded-xl border border-[#27272a] bg-[#121215] p-5 space-y-3">
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
-                  <div className="text-xs font-mono text-zinc-300">
+              <div className={`rounded-xl border p-5 space-y-3 ${t.card}`}>
+                <div className={`flex items-center justify-between pb-3 border-b ${t.border}`}>
+                  <div className={`text-xs font-mono ${isDark ? "text-zinc-300" : "text-slate-700"}`}>
                     Active Filters: REGEX_PAN_V2 • ROGUE_NONCE_SCAN • SHANNON_ENTROPY
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
@@ -873,15 +914,15 @@ export default function App() {
                   </span>
                 </div>
 
-                <div className="p-3 rounded bg-[#09090b] border border-zinc-800 font-mono text-xs space-y-2">
+                <div className={`p-3 rounded border font-mono text-xs space-y-2 ${t.cardSub}`}>
                   {auditLogs.map((log) => (
-                    <div key={log.id} className="flex space-x-3 text-zinc-300">
-                      <span className="text-zinc-500">[{log.time}]</span>
+                    <div key={log.id} className="flex space-x-3">
+                      <span className={t.muted}>[{log.time}]</span>
                       <span
                         className={
                           log.level === "CRITICAL"
-                            ? "text-rose-400 font-bold"
-                            : "text-violet-400"
+                            ? "text-rose-500 font-bold"
+                            : "text-violet-600 dark:text-violet-400"
                         }
                       >
                         {log.level}
@@ -898,20 +939,20 @@ export default function App() {
           {activeTab === "control" && (
             <div className="space-y-5 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">Centralized Device Control</h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <h2 className="text-base font-semibold">Centralized Device Control</h2>
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Cluster-wide emergency actuation controls and cryptographic commands.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Control 1: Fleet Lockout */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">Emergency Fleet Lockout</span>
-                    <Power className={`w-4 h-4 ${fleetLockout ? "text-rose-400" : "text-zinc-500"}`} />
+                    <span className="text-sm font-semibold">Emergency Fleet Lockout</span>
+                    <Power className={`w-4 h-4 ${fleetLockout ? "text-rose-500" : t.muted}`} />
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className={`text-xs ${t.subtext}`}>
                     Immediately revoke all ephemeral session tokens and drop all client TCP connections.
                   </p>
                   <button
@@ -919,7 +960,9 @@ export default function App() {
                     className={`w-full py-2 rounded-lg text-xs font-semibold transition-colors ${
                       fleetLockout
                         ? "bg-rose-600 hover:bg-rose-500 text-white"
-                        : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                        : isDark
+                        ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                        : "bg-slate-100 hover:bg-slate-200 text-slate-800"
                     }`}
                   >
                     {fleetLockout ? "Disengage Lockout" : "Engage Emergency Lockout"}
@@ -927,29 +970,29 @@ export default function App() {
                 </div>
 
                 {/* Control 2: Force Rotation */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">Force Ephemeral Key Rotation</span>
-                    <RotateCw className="w-4 h-4 text-violet-400" />
+                    <span className="text-sm font-semibold">Force Ephemeral Key Rotation</span>
+                    <RotateCw className="w-4 h-4 text-violet-500" />
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className={`text-xs ${t.subtext}`}>
                     Issue instantaneous re-keying challenges across all 4 registered SecureNodeX devices.
                   </p>
                   <button
                     onClick={() => setTokenTTL(180)}
-                    className="w-full py-2 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-colors"
+                    className={`w-full py-2 rounded-lg text-xs font-semibold transition-colors ${isDark ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200" : "bg-slate-100 hover:bg-slate-200 text-slate-800"}`}
                   >
                     Re-Key Mesh Now
                   </button>
                 </div>
 
                 {/* Control 3: Broker CRL Sync */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-white">Dynamic Broker CRL Sync</span>
-                    <RefreshCw className="w-4 h-4 text-emerald-400" />
+                    <span className="text-sm font-semibold">Dynamic Broker CRL Sync</span>
+                    <RefreshCw className="w-4 h-4 text-emerald-500" />
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className={`text-xs ${t.subtext}`}>
                     Synchronize blacklist hash ring with Mosquitto's in-memory TLS context.
                   </p>
                   <button
@@ -957,7 +1000,9 @@ export default function App() {
                     className={`w-full py-2 rounded-lg text-xs font-semibold transition-colors ${
                       dynamicCrlSync
                         ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
-                        : "bg-zinc-800 text-zinc-300"
+                        : isDark
+                        ? "bg-zinc-800 text-zinc-300"
+                        : "bg-slate-100 text-slate-800"
                     }`}
                   >
                     {dynamicCrlSync ? "CRL Synchronized (Active)" : "Sync Paused"}
@@ -971,8 +1016,8 @@ export default function App() {
           {activeTab === "analytics" && (
             <div className="space-y-6 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">Mesh Telemetry &amp; Performance Analytics</h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <h2 className="text-base font-semibold">Mesh Telemetry &amp; Performance Analytics</h2>
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Real-time throughput curves, Shannon entropy distribution, and silicon architecture benchmarks.
                 </p>
               </div>
@@ -980,15 +1025,15 @@ export default function App() {
               {/* Grid 1: Throughput & Entropy */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Throughput Curve */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-xs font-semibold text-zinc-200 uppercase font-mono">
+                      <h3 className="text-xs font-semibold uppercase font-mono">
                         Handshake Throughput (ops/s)
                       </h3>
-                      <p className="text-[11px] text-zinc-500">Peak: 1,840 ops/s • Current: 1,420 ops/s</p>
+                      <p className={`text-[11px] ${t.muted}`}>Peak: 1,840 ops/s • Current: 1,420 ops/s</p>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold">
                       LIVE
                     </span>
                   </div>
@@ -1002,9 +1047,9 @@ export default function App() {
                           <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
                         </linearGradient>
                       </defs>
-                      <line x1="0" y1="40" x2="500" y2="40" stroke="#27272a" strokeDasharray="3 3" />
-                      <line x1="0" y1="80" x2="500" y2="80" stroke="#27272a" strokeDasharray="3 3" />
-                      <line x1="0" y1="120" x2="500" y2="120" stroke="#27272a" strokeDasharray="3 3" />
+                      <line x1="0" y1="40" x2="500" y2="40" stroke={isDark ? "#27272a" : "#e2e8f0"} strokeDasharray="3 3" />
+                      <line x1="0" y1="80" x2="500" y2="80" stroke={isDark ? "#27272a" : "#e2e8f0"} strokeDasharray="3 3" />
+                      <line x1="0" y1="120" x2="500" y2="120" stroke={isDark ? "#27272a" : "#e2e8f0"} strokeDasharray="3 3" />
 
                       <path
                         d="M0,130 Q50,110 100,120 T200,90 T300,70 T400,60 T500,45 L500,160 L0,160 Z"
@@ -1019,7 +1064,7 @@ export default function App() {
                       <circle cx="500" cy="45" r="4" fill="#a78bfa" />
                     </svg>
                   </div>
-                  <div className="flex justify-between text-[10px] font-mono text-zinc-500">
+                  <div className={`flex justify-between text-[10px] font-mono ${t.muted}`}>
                     <span>-60s</span>
                     <span>-45s</span>
                     <span>-30s</span>
@@ -1029,15 +1074,15 @@ export default function App() {
                 </div>
 
                 {/* Shannon Entropy Distribution */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-xs font-semibold text-zinc-200 uppercase font-mono">
+                      <h3 className="text-xs font-semibold uppercase font-mono">
                         Shannon Payload Entropy Score
                       </h3>
-                      <p className="text-[11px] text-zinc-500">Nominal Baseline: &gt;= 7.20 • Gemini Scan</p>
+                      <p className={`text-[11px] ${t.muted}`}>Nominal Baseline: &gt;= 7.20 • Gemini Scan</p>
                     </div>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-950 text-violet-300 border border-violet-800">
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border font-semibold ${isDark ? "bg-violet-950 text-violet-300 border-violet-800" : "bg-violet-50 text-violet-700 border-violet-200"}`}>
                       7.92 AVG
                     </span>
                   </div>
@@ -1066,7 +1111,7 @@ export default function App() {
                       />
                     </svg>
                   </div>
-                  <div className="flex justify-between text-[10px] font-mono text-zinc-500">
+                  <div className={`flex justify-between text-[10px] font-mono ${t.muted}`}>
                     <span>Clean Ciphertext</span>
                     <span>Encrypted Telemetry</span>
                     <span>High Entropy (7.92)</span>
@@ -1075,44 +1120,44 @@ export default function App() {
               </div>
 
               {/* Silicon Architecture Hardware Breakdown */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
-                <h3 className="text-xs font-semibold text-zinc-200 uppercase font-mono">
+              <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
+                <h3 className="text-xs font-semibold uppercase font-mono">
                   Silicon Architecture Benchmark &amp; Resource Footprint
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-                  <div className="p-3.5 rounded-lg bg-[#09090b] border border-zinc-800 space-y-2">
-                    <div className="font-semibold text-zinc-200">ESP32-S3 (Dual LX7)</div>
-                    <div className="text-[11px] font-mono text-emerald-400">ECC-256: 34.2 ms</div>
-                    <div className="text-[10px] font-mono text-zinc-500">RAM: 4.2 KB • 18mA</div>
-                    <div className="h-1 bg-zinc-800 rounded-full overflow-hidden mt-1">
+                  <div className={`p-3.5 rounded-lg border space-y-2 ${t.cardSub}`}>
+                    <div className="font-semibold">ESP32-S3 (Dual LX7)</div>
+                    <div className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">ECC-256: 34.2 ms</div>
+                    <div className={`text-[10px] font-mono ${t.muted}`}>RAM: 4.2 KB • 18mA</div>
+                    <div className={`h-1 rounded-full overflow-hidden mt-1 ${isDark ? "bg-zinc-800" : "bg-slate-200"}`}>
                       <div className="h-full bg-emerald-500" style={{ width: "95%" }}></div>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-lg bg-[#09090b] border border-zinc-800 space-y-2">
-                    <div className="font-semibold text-zinc-200">ESP32-WROOM (LX6)</div>
-                    <div className="text-[11px] font-mono text-emerald-400">ECC-256: 38.6 ms</div>
-                    <div className="text-[10px] font-mono text-zinc-500">RAM: 4.6 KB • 22mA</div>
-                    <div className="h-1 bg-zinc-800 rounded-full overflow-hidden mt-1">
+                  <div className={`p-3.5 rounded-lg border space-y-2 ${t.cardSub}`}>
+                    <div className="font-semibold">ESP32-WROOM (LX6)</div>
+                    <div className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">ECC-256: 38.6 ms</div>
+                    <div className={`text-[10px] font-mono ${t.muted}`}>RAM: 4.6 KB • 22mA</div>
+                    <div className={`h-1 rounded-full overflow-hidden mt-1 ${isDark ? "bg-zinc-800" : "bg-slate-200"}`}>
                       <div className="h-full bg-emerald-500" style={{ width: "90%" }}></div>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-lg bg-[#09090b] border border-zinc-800 space-y-2">
-                    <div className="font-semibold text-zinc-200">Raspberry Pi 4 (A72)</div>
-                    <div className="text-[11px] font-mono text-indigo-400">TLS 1.3: 11.8 ms</div>
-                    <div className="text-[10px] font-mono text-zinc-500">RAM: 12.8 KB • Gateway</div>
-                    <div className="h-1 bg-zinc-800 rounded-full overflow-hidden mt-1">
+                  <div className={`p-3.5 rounded-lg border space-y-2 ${t.cardSub}`}>
+                    <div className="font-semibold">Raspberry Pi 4 (A72)</div>
+                    <div className="text-[11px] font-mono text-indigo-600 dark:text-indigo-400">TLS 1.3: 11.8 ms</div>
+                    <div className={`text-[10px] font-mono ${t.muted}`}>RAM: 12.8 KB • Gateway</div>
+                    <div className={`h-1 rounded-full overflow-hidden mt-1 ${isDark ? "bg-zinc-800" : "bg-slate-200"}`}>
                       <div className="h-full bg-indigo-500" style={{ width: "99%" }}></div>
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-lg bg-[#09090b] border border-zinc-800 space-y-2">
-                    <div className="font-semibold text-zinc-200">ESP32-C3 (RISC-V)</div>
-                    <div className="text-[11px] font-mono text-zinc-400">Revoked (CRL)</div>
-                    <div className="text-[10px] font-mono text-zinc-500">RAM: 0 KB • Standby</div>
-                    <div className="h-1 bg-zinc-800 rounded-full overflow-hidden mt-1">
+                  <div className={`p-3.5 rounded-lg border space-y-2 ${t.cardSub}`}>
+                    <div className="font-semibold">ESP32-C3 (RISC-V)</div>
+                    <div className={`text-[11px] font-mono ${t.muted}`}>Revoked (CRL)</div>
+                    <div className={`text-[10px] font-mono ${t.muted}`}>RAM: 0 KB • Standby</div>
+                    <div className={`h-1 rounded-full overflow-hidden mt-1 ${isDark ? "bg-zinc-800" : "bg-slate-200"}`}>
                       <div className="h-full bg-rose-500" style={{ width: "10%" }}></div>
                     </div>
                   </div>
@@ -1126,21 +1171,23 @@ export default function App() {
             <div className="space-y-5 max-w-6xl mx-auto">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-semibold text-white">Logs &amp; Audit Trail</h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <h2 className="text-base font-semibold">Logs &amp; Audit Trail</h2>
+                  <p className={`text-xs mt-0.5 ${t.subtext}`}>
                     Immutable security log records from AuthSphere mTLS broker and AI threat scanners.
                   </p>
                 </div>
 
-                <div className="flex items-center space-x-1.5 bg-[#121215] p-1 rounded-lg border border-[#27272a]">
+                <div className={`flex items-center space-x-1.5 p-1 rounded-lg border ${t.card}`}>
                   {["ALL", "INFO", "AI-EVAL", "CRITICAL"].map((lvl) => (
                     <button
                       key={lvl}
                       onClick={() => setLogFilter(lvl)}
                       className={`px-2.5 py-1 rounded text-[11px] font-mono font-medium transition-colors ${
                         logFilter === lvl
-                          ? "bg-zinc-800 text-white font-semibold"
-                          : "text-zinc-400 hover:text-zinc-200"
+                          ? isDark
+                            ? "bg-zinc-800 text-white font-semibold"
+                            : "bg-slate-200 text-slate-900 font-semibold"
+                          : t.subtext
                       }`}
                     >
                       {lvl}
@@ -1150,26 +1197,34 @@ export default function App() {
               </div>
 
               {/* Log Stream */}
-              <div className="rounded-xl border border-[#27272a] bg-[#121215] p-4 space-y-2 font-mono text-xs">
+              <div className={`rounded-xl border p-4 space-y-2 font-mono text-xs ${t.card}`}>
                 {filteredLogs.map((log) => (
                   <div
                     key={log.id}
-                    className="p-2.5 rounded bg-[#09090b] border border-zinc-800 flex items-start space-x-3"
+                    className={`p-2.5 rounded border flex items-start space-x-3 ${
+                      log.level === "CRITICAL"
+                        ? "bg-rose-950/20 border-rose-900/40 text-rose-400"
+                        : isDark
+                        ? "bg-[#09090b] border-zinc-800 text-zinc-300"
+                        : "bg-slate-50 border-slate-200 text-slate-800"
+                    }`}
                   >
-                    <span className="text-zinc-500">[{log.time}]</span>
+                    <span className={t.muted}>[{log.time}]</span>
                     <span
                       className={`px-1.5 py-0.2 rounded font-bold text-[10px] ${
                         log.level === "CRITICAL"
                           ? "bg-rose-600 text-white"
                           : log.level === "AI-EVAL"
                           ? "bg-violet-950 text-violet-300 border border-violet-800"
-                          : "bg-zinc-800 text-zinc-300"
+                          : isDark
+                          ? "bg-zinc-800 text-zinc-300"
+                          : "bg-slate-200 text-slate-800"
                       }`}
                     >
                       {log.level}
                     </span>
-                    <span className="text-zinc-400">[{log.source}]</span>
-                    <span className="text-zinc-200">{log.message}</span>
+                    <span className={t.subtext}>[{log.source}]</span>
+                    <span className="flex-1">{log.message}</span>
                   </div>
                 ))}
               </div>
@@ -1180,18 +1235,18 @@ export default function App() {
           {activeTab === "certificates" && (
             <div className="space-y-5 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">
+                <h2 className="text-base font-semibold">
                   X.509 Certificate Matrix &amp; CRL Ring
                 </h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Device digital identities mapped to Mosquitto's `crl.pem` blacklist.
                 </p>
               </div>
 
-              <div className="rounded-xl border border-[#27272a] bg-[#121215] overflow-hidden">
+              <div className={`rounded-xl border overflow-hidden ${t.card}`}>
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-[#27272a] bg-[#0c0c0e] text-[11px] font-medium text-zinc-400 uppercase tracking-wider">
+                    <tr className={`border-b text-[11px] font-medium uppercase tracking-wider ${t.border} ${t.tableHead}`}>
                       <th className="py-3 px-5">Device Serial</th>
                       <th className="py-3 px-4">Node Bound</th>
                       <th className="py-3 px-4">Signature Algorithm</th>
@@ -1199,14 +1254,14 @@ export default function App() {
                       <th className="py-3 px-5 text-right">Validity</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#27272a]">
+                  <tbody className={`divide-y ${t.divider}`}>
                     {devices.map((d) => (
-                      <tr key={d.serial} className="hover:bg-zinc-850/30">
-                        <td className="py-3.5 px-5 font-mono text-zinc-200 font-semibold">
+                      <tr key={d.serial} className={t.tableHover}>
+                        <td className="py-3.5 px-5 font-mono font-semibold">
                           {d.serial}
                         </td>
-                        <td className="py-3.5 px-4 font-mono text-zinc-400">{d.id}</td>
-                        <td className="py-3.5 px-4 font-mono text-zinc-400">
+                        <td className={`py-3.5 px-4 font-mono ${t.subtext}`}>{d.id}</td>
+                        <td className={`py-3.5 px-4 font-mono ${t.subtext}`}>
                           ECDSA / SHA-256
                         </td>
                         <td className="py-3.5 px-4">
@@ -1224,7 +1279,7 @@ export default function App() {
                             </span>
                           )}
                         </td>
-                        <td className="py-3.5 px-5 text-right font-mono text-zinc-500">
+                        <td className={`py-3.5 px-5 text-right font-mono ${t.muted}`}>
                           2035-12-31
                         </td>
                       </tr>
@@ -1239,8 +1294,8 @@ export default function App() {
           {activeTab === "alerts" && (
             <div className="space-y-5 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">Active Incidents &amp; Alerts</h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <h2 className="text-base font-semibold">Active Incidents &amp; Alerts</h2>
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Real-time containment queue with automated quarantine actions.
                 </p>
               </div>
@@ -1252,7 +1307,7 @@ export default function App() {
                     className={`p-4 rounded-xl border space-y-2 ${
                       alt.severity === "CRITICAL"
                         ? "bg-rose-950/20 border-rose-900/60"
-                        : "bg-[#121215] border-[#27272a]"
+                        : t.card
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -1261,25 +1316,27 @@ export default function App() {
                           className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
                             alt.severity === "CRITICAL"
                               ? "bg-rose-600 text-white"
-                              : "bg-zinc-800 text-zinc-300"
+                              : isDark
+                              ? "bg-zinc-800 text-zinc-300"
+                              : "bg-slate-200 text-slate-800"
                           }`}
                         >
                           {alt.severity}
                         </span>
-                        <span className="font-semibold text-sm text-zinc-100">
+                        <span className="font-semibold text-sm">
                           {alt.title}
                         </span>
                       </div>
-                      <span className="text-[11px] font-mono text-zinc-500">
+                      <span className={`text-[11px] font-mono ${t.muted}`}>
                         {alt.timestamp}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-300">{alt.description}</p>
+                    <p className={`text-xs ${isDark ? "text-zinc-300" : "text-slate-700"}`}>{alt.description}</p>
                     <div className="flex items-center justify-between pt-1 text-xs">
-                      <span className="font-mono text-zinc-400">Target: {alt.target}</span>
+                      <span className={`font-mono ${t.subtext}`}>Target: {alt.target}</span>
                       <span
                         className={`font-mono text-[11px] font-semibold ${
-                          alt.status.includes("ACTIVE") ? "text-rose-400" : "text-emerald-400"
+                          alt.status.includes("ACTIVE") ? "text-rose-500" : "text-emerald-600 dark:text-emerald-400"
                         }`}
                       >
                         Status: {alt.status}
@@ -1295,50 +1352,50 @@ export default function App() {
           {activeTab === "settings" && (
             <div className="space-y-6 max-w-6xl mx-auto">
               <div>
-                <h2 className="text-base font-semibold text-white">
+                <h2 className="text-base font-semibold">
                   Cluster Settings &amp; SaaS Configuration
                 </h2>
-                <p className="text-xs text-zinc-400 mt-0.5">
+                <p className={`text-xs mt-0.5 ${t.subtext}`}>
                   Broker bindings, API key provisioning, cryptographic enforcement, and alert webhooks.
                 </p>
               </div>
 
               {/* Section 1: Broker Network Binding */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                  <Network className="w-4 h-4 text-violet-400" />
+              <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                  <Network className="w-4 h-4 text-violet-500" />
                   <span>Broker Network Endpoints</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <label className="block text-zinc-400 font-mono mb-1">Mosquitto Host IP</label>
+                    <label className={`block font-mono mb-1 ${t.subtext}`}>Mosquitto Host IP</label>
                     <input
                       type="text"
                       value={brokerIp}
                       onChange={(e) => setBrokerIp(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 font-mono text-xs focus:outline-none focus:border-violet-500"
+                      className={`w-full px-3 py-2 rounded-lg font-mono text-xs focus:outline-none transition-colors border ${t.input}`}
                     />
                   </div>
                   <div>
-                    <label className="block text-zinc-400 font-mono mb-1">mTLS Listening Port</label>
+                    <label className={`block font-mono mb-1 ${t.subtext}`}>mTLS Listening Port</label>
                     <input
                       type="text"
                       value={brokerPort}
                       onChange={(e) => setBrokerPort(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 font-mono text-xs focus:outline-none focus:border-violet-500"
+                      className={`w-full px-3 py-2 rounded-lg font-mono text-xs focus:outline-none transition-colors border ${t.input}`}
                     />
                   </div>
                 </div>
               </div>
 
               {/* Section 2: API Keys Generator */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+              <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                    <Key className="w-4 h-4 text-emerald-400" />
+                  <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                    <Key className="w-4 h-4 text-emerald-500" />
                     <span>API Provisioning Keys</span>
                   </h3>
-                  <span className="text-[10px] font-mono text-zinc-500">Tier-1 Scoped</span>
+                  <span className={`text-[10px] font-mono ${t.muted}`}>Tier-1 Scoped</span>
                 </div>
 
                 <form onSubmit={handleGenerateKey} className="flex gap-2">
@@ -1347,11 +1404,11 @@ export default function App() {
                     placeholder="Enter key identifier (e.g., Fleet Worker 03)..."
                     value={newKeyName}
                     onChange={(e) => setNewKeyName(e.target.value)}
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 text-xs focus:outline-none focus:border-emerald-500"
+                    className={`flex-1 px-3 py-1.5 rounded-lg text-xs focus:outline-none transition-colors border ${t.input}`}
                   />
                   <button
                     type="submit"
-                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center space-x-1.5"
+                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center space-x-1.5 shadow-xs"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Generate Key</span>
@@ -1362,20 +1419,20 @@ export default function App() {
                   {apiKeys.map((k) => (
                     <div
                       key={k.id}
-                      className="flex items-center justify-between p-2.5 rounded-lg bg-[#09090b] border border-zinc-800 text-xs font-mono"
+                      className={`flex items-center justify-between p-2.5 rounded-lg border text-xs font-mono ${t.cardSub}`}
                     >
                       <div className="flex items-center space-x-3">
-                        <span className="text-zinc-200 font-semibold">{k.name}</span>
-                        <span className="text-zinc-500 text-[11px]">{k.id}</span>
+                        <span className="font-semibold">{k.name}</span>
+                        <span className={`text-[11px] ${t.muted}`}>{k.id}</span>
                         <span className="px-1.5 py-0.2 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800">
                           {k.status}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <span className="text-zinc-500 text-[10px]">Created: {k.created}</span>
+                        <span className={`text-[10px] ${t.muted}`}>Created: {k.created}</span>
                         <button
                           onClick={() => handleDeleteKey(k.id)}
-                          className="text-zinc-500 hover:text-rose-400 transition-colors"
+                          className="hover:text-rose-500 transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -1386,22 +1443,22 @@ export default function App() {
               </div>
 
               {/* Section 3: TLS Toggles */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                  <Lock className="w-4 h-4 text-violet-400" />
+              <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                  <Lock className="w-4 h-4 text-violet-500" />
                   <span>Cryptographic Policy Toggles</span>
                 </h3>
 
-                <div className="divide-y divide-zinc-800 text-xs">
+                <div className={`divide-y text-xs ${t.divider}`}>
                   <div className="flex items-center justify-between py-2.5">
                     <div>
-                      <div className="font-semibold text-zinc-200">TLS 1.3 Strict Cipher Suites</div>
-                      <div className="text-zinc-500 text-[11px]">Enforce ECDHE-ECDSA-AES128-GCM-SHA256 only.</div>
+                      <div className="font-semibold">TLS 1.3 Strict Cipher Suites</div>
+                      <div className={`text-[11px] ${t.muted}`}>Enforce ECDHE-ECDSA-AES128-GCM-SHA256 only.</div>
                     </div>
                     <button
                       onClick={() => setTlsStrict(!tlsStrict)}
                       className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
-                        tlsStrict ? "bg-emerald-600" : "bg-zinc-800"
+                        tlsStrict ? "bg-emerald-600" : isDark ? "bg-zinc-800" : "bg-slate-300"
                       }`}
                     >
                       <div
@@ -1414,13 +1471,13 @@ export default function App() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div>
-                      <div className="font-semibold text-zinc-200">Client Certificate Strict Require</div>
-                      <div className="text-zinc-500 text-[11px]">Reject unauthenticated clients before TLS greeting.</div>
+                      <div className="font-semibold">Client Certificate Strict Require</div>
+                      <div className={`text-[11px] ${t.muted}`}>Reject unauthenticated clients before TLS greeting.</div>
                     </div>
                     <button
                       onClick={() => setRequireClientCert(!requireClientCert)}
                       className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
-                        requireClientCert ? "bg-emerald-600" : "bg-zinc-800"
+                        requireClientCert ? "bg-emerald-600" : isDark ? "bg-zinc-800" : "bg-slate-300"
                       }`}
                     >
                       <div
@@ -1433,13 +1490,13 @@ export default function App() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div>
-                      <div className="font-semibold text-zinc-200">Shannon Entropy Filter</div>
-                      <div className="text-zinc-500 text-[11px]">Inspect all payload bytes with Gemini 2.0 heuristic scanner.</div>
+                      <div className="font-semibold">Shannon Entropy Filter</div>
+                      <div className={`text-[11px] ${t.muted}`}>Inspect all payload bytes with Gemini 2.0 heuristic scanner.</div>
                     </div>
                     <button
                       onClick={() => setEntropyFilter(!entropyFilter)}
                       className={`w-10 h-5 rounded-full p-0.5 transition-colors ${
-                        entropyFilter ? "bg-emerald-600" : "bg-zinc-800"
+                        entropyFilter ? "bg-emerald-600" : isDark ? "bg-zinc-800" : "bg-slate-300"
                       }`}
                     >
                       <div
@@ -1453,9 +1510,9 @@ export default function App() {
               </div>
 
               {/* Section 4: Webhook Dispatcher */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                  <Send className="w-4 h-4 text-violet-400" />
+              <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                  <Send className="w-4 h-4 text-violet-500" />
                   <span>Real-Time Incident Webhook</span>
                 </h3>
                 <div className="flex gap-2">
@@ -1463,11 +1520,11 @@ export default function App() {
                     type="text"
                     value={webhookUrl}
                     onChange={(e) => setWebhookUrl(e.target.value)}
-                    className="flex-1 px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 font-mono text-xs focus:outline-none focus:border-violet-500"
+                    className={`flex-1 px-3 py-1.5 rounded-lg font-mono text-xs focus:outline-none transition-colors border ${t.input}`}
                   />
                   <button
                     onClick={handleTestWebhook}
-                    className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs transition-colors"
+                    className={`px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors border ${isDark ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700" : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"}`}
                   >
                     {webhookSent ? "Payload Sent!" : "Dispatch Test"}
                   </button>
@@ -1476,20 +1533,20 @@ export default function App() {
             </div>
           )}
 
-          {/* TAB 11: PROFILE (FULL SAAS EDITABLE SUITE) */}
+          {/* TAB 11: PROFILE */}
           {activeTab === "profile" && (
             <div className="space-y-6 max-w-6xl mx-auto">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-semibold text-white">SecOps Operator Identity &amp; Access</h2>
-                  <p className="text-xs text-zinc-400 mt-0.5">
+                  <h2 className="text-base font-semibold">SecOps Operator Identity &amp; Access</h2>
+                  <p className={`text-xs mt-0.5 ${t.subtext}`}>
                     Hardware-attested session management, cryptographic RBAC keys, and operator profile.
                   </p>
                 </div>
 
                 <div className="flex items-center space-x-2">
                   {profileSuccess && (
-                    <span className="text-xs font-mono text-emerald-400 flex items-center space-x-1 animate-pulse">
+                    <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 flex items-center space-x-1 animate-pulse">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>Changes Saved!</span>
                     </span>
@@ -1501,7 +1558,11 @@ export default function App() {
                       }
                       setIsEditingProfile(!isEditingProfile);
                     }}
-                    className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold flex items-center space-x-1.5 transition-colors border border-zinc-700"
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-colors border ${
+                      isDark
+                        ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700"
+                        : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
+                    }`}
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                     <span>{isEditingProfile ? "Cancel Editing" : "Edit Profile Details"}</span>
@@ -1513,58 +1574,58 @@ export default function App() {
               {isEditingProfile ? (
                 <form
                   onSubmit={handleSaveProfile}
-                  className="p-6 rounded-xl bg-[#121215] border border-[#27272a] space-y-4"
+                  className={`p-6 rounded-xl border space-y-4 ${t.card}`}
                 >
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider font-mono">
                     Edit Operator Information
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <label className="block text-zinc-400 font-medium mb-1">Full Name</label>
+                      <label className={`block font-medium mb-1 ${t.subtext}`}>Full Name</label>
                       <input
                         type="text"
                         value={editForm.fullName}
                         onChange={(e) => setEditForm({ ...editForm, fullName: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 text-xs focus:outline-none focus:border-violet-500 font-medium"
+                        className={`w-full px-3 py-2 rounded-lg text-xs font-medium border ${t.input}`}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-zinc-400 font-medium mb-1">Role Title</label>
+                      <label className={`block font-medium mb-1 ${t.subtext}`}>Role Title</label>
                       <input
                         type="text"
                         value={editForm.roleTitle}
                         onChange={(e) => setEditForm({ ...editForm, roleTitle: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 text-xs focus:outline-none focus:border-violet-500 font-medium"
+                        className={`w-full px-3 py-2 rounded-lg text-xs font-medium border ${t.input}`}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-zinc-400 font-medium mb-1">Enterprise Email</label>
+                      <label className={`block font-medium mb-1 ${t.subtext}`}>Enterprise Email</label>
                       <input
                         type="email"
                         value={editForm.email}
                         onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 font-mono text-xs focus:outline-none focus:border-violet-500"
+                        className={`w-full px-3 py-2 rounded-lg font-mono text-xs border ${t.input}`}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-zinc-400 font-medium mb-1">Emergency Escalation Contact</label>
+                      <label className={`block font-medium mb-1 ${t.subtext}`}>Emergency Escalation Contact</label>
                       <input
                         type="text"
                         value={editForm.emergencyContact}
                         onChange={(e) => setEditForm({ ...editForm, emergencyContact: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 font-mono text-xs focus:outline-none focus:border-violet-500"
+                        className={`w-full px-3 py-2 rounded-lg font-mono text-xs border ${t.input}`}
                       />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-zinc-400 font-medium mb-1">Organization / Mesh Unit</label>
+                      <label className={`block font-medium mb-1 ${t.subtext}`}>Organization / Mesh Unit</label>
                       <input
                         type="text"
                         value={editForm.organization}
                         onChange={(e) => setEditForm({ ...editForm, organization: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-200 text-xs focus:outline-none focus:border-violet-500"
+                        className={`w-full px-3 py-2 rounded-lg text-xs border ${t.input}`}
                       />
                     </div>
                   </div>
@@ -1573,7 +1634,9 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setIsEditingProfile(false)}
-                      className="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 text-xs font-semibold hover:bg-zinc-700 transition-colors"
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                        isDark ? "bg-zinc-800 text-zinc-300 hover:bg-zinc-700" : "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                      }`}
                     >
                       Discard
                     </button>
@@ -1589,64 +1652,66 @@ export default function App() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Identity Card */}
-                  <div className="p-6 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                  <div className={`p-6 rounded-xl border space-y-4 ${t.card}`}>
                     <div className="flex items-center space-x-4">
-                      <div className="w-14 h-14 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-lg text-white shadow-sm">
+                      <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center font-bold text-lg shadow-sm ${
+                        isDark ? "bg-zinc-800 border-zinc-700 text-white" : "bg-slate-100 border-slate-300 text-slate-900"
+                      }`}>
                         {getInitials(profileData.fullName)}
                       </div>
                       <div>
-                        <h3 className="text-base font-bold text-white">{profileData.fullName}</h3>
-                        <p className="text-xs font-mono text-zinc-400">{profileData.email}</p>
+                        <h3 className="text-base font-bold">{profileData.fullName}</h3>
+                        <p className={`text-xs font-mono ${t.subtext}`}>{profileData.email}</p>
                         <span className="inline-block mt-1 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold">
                           Session: Hardware Token Attested
                         </span>
                       </div>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-zinc-800 text-xs">
+                    <div className={`space-y-2 pt-2 border-t text-xs ${t.border}`}>
                       <div className="flex justify-between py-1">
-                        <span className="text-zinc-500">Platform Role</span>
-                        <span className="font-semibold text-zinc-200">{profileData.roleTitle}</span>
+                        <span className={t.subtext}>Platform Role</span>
+                        <span className="font-semibold">{profileData.roleTitle}</span>
                       </div>
                       <div className="flex justify-between py-1">
-                        <span className="text-zinc-500">Access Clearance</span>
-                        <span className="font-semibold text-emerald-400 font-mono">Tier-1 Cluster Admin</span>
+                        <span className={t.subtext}>Access Clearance</span>
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-mono">Tier-1 Cluster Admin</span>
                       </div>
                       <div className="flex justify-between py-1">
-                        <span className="text-zinc-500">Organization</span>
-                        <span className="font-mono text-zinc-300">{profileData.organization}</span>
+                        <span className={t.subtext}>Organization</span>
+                        <span className="font-mono">{profileData.organization}</span>
                       </div>
                       <div className="flex justify-between py-1">
-                        <span className="text-zinc-500">Emergency Contact</span>
-                        <span className="font-mono text-zinc-300">{profileData.emergencyContact}</span>
+                        <span className={t.subtext}>Emergency Contact</span>
+                        <span className="font-mono">{profileData.emergencyContact}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Hardware Security Key (FIDO2/YubiKey) */}
-                  <div className="p-6 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+                  <div className={`p-6 rounded-xl border space-y-4 ${t.card}`}>
                     <div className="flex items-center justify-between">
-                      <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                        <Fingerprint className="w-4 h-4 text-emerald-400" />
+                      <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                        <Fingerprint className="w-4 h-4 text-emerald-500" />
                         <span>FIDO2 / YubiKey Hardware Token</span>
                       </h3>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold">
                         ACTIVE &amp; ENFORCED
                       </span>
                     </div>
 
                     <div className="space-y-2 text-xs">
-                      <div className="p-2.5 rounded bg-[#09090b] border border-zinc-800 flex justify-between font-mono">
-                        <span className="text-zinc-400">Security Key Model</span>
-                        <span className="text-zinc-200 font-semibold">YubiKey 5C NFC (FIPS 140-2)</span>
+                      <div className={`p-2.5 rounded border flex justify-between font-mono ${t.cardSub}`}>
+                        <span className={t.subtext}>Security Key Model</span>
+                        <span className="font-semibold">YubiKey 5C NFC (FIPS 140-2)</span>
                       </div>
-                      <div className="p-2.5 rounded bg-[#09090b] border border-zinc-800 flex justify-between font-mono">
-                        <span className="text-zinc-400">Attestation Serial</span>
-                        <span className="text-zinc-200">YK-9041-SEC-774A</span>
+                      <div className={`p-2.5 rounded border flex justify-between font-mono ${t.cardSub}`}>
+                        <span className={t.subtext}>Attestation Serial</span>
+                        <span>YK-9041-SEC-774A</span>
                       </div>
-                      <div className="p-2.5 rounded bg-[#09090b] border border-zinc-800 flex justify-between font-mono">
-                        <span className="text-zinc-400">WebAuthn Assertion</span>
-                        <span className="text-emerald-400">userPresence + userVerification</span>
+                      <div className={`p-2.5 rounded border flex justify-between font-mono ${t.cardSub}`}>
+                        <span className={t.subtext}>WebAuthn Assertion</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">userPresence + userVerification</span>
                       </div>
                     </div>
                   </div>
@@ -1656,59 +1721,59 @@ export default function App() {
               {/* MFA & Ephemeral Key Rotation Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* TOTP Authenticator */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
+                <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                      <Smartphone className="w-4 h-4 text-violet-400" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                      <Smartphone className="w-4 h-4 text-violet-500" />
                       <span>TOTP Mobile Authenticator</span>
                     </h3>
                     <span
                       className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold ${
                         totpEnabled
                           ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
-                          : "bg-zinc-800 text-zinc-400 border border-zinc-700"
+                          : t.badgeZinc
                       }`}
                     >
                       {totpEnabled ? "ENABLED" : "DISABLED"}
                     </span>
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className={`text-xs ${t.subtext}`}>
                     Time-based one-time password fallback (1Password / Google Authenticator) for out-of-band SecOps attestation.
                   </p>
                   <button
                     onClick={() => setTotpEnabled(!totpEnabled)}
-                    className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-colors"
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border ${isDark ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700" : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"}`}
                   >
                     {totpEnabled ? "Disable TOTP Fallback" : "Enable TOTP Fallback"}
                   </button>
                 </div>
 
                 {/* Session Ephemeral Fingerprint */}
-                <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
+                <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                      <Key className="w-4 h-4 text-emerald-400" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                      <Key className="w-4 h-4 text-emerald-500" />
                       <span>Operator Session Key</span>
                     </h3>
                     {keyRotated && (
-                      <span className="text-[10px] font-mono text-emerald-400 animate-pulse">
+                      <span className="text-[10px] font-mono text-emerald-500 animate-pulse">
                         Rotated!
                       </span>
                     )}
                   </div>
-                  <div className="p-2.5 rounded bg-[#09090b] border border-zinc-800 font-mono text-xs text-zinc-300 flex items-center justify-between">
+                  <div className={`p-2.5 rounded border font-mono text-xs flex items-center justify-between ${t.cardSub}`}>
                     <span className="truncate">{sessionFingerprint}</span>
                     <button
                       onClick={handleRotateSessionKey}
                       title="Re-generate Ephemeral Key"
-                      className="text-zinc-400 hover:text-white transition-colors ml-2"
+                      className="hover:text-emerald-500 transition-colors ml-2"
                     >
-                      <RotateCw className={`w-3.5 h-3.5 ${keyRotated ? "animate-spin text-emerald-400" : ""}`} />
+                      <RotateCw className={`w-3.5 h-3.5 ${keyRotated ? "animate-spin text-emerald-500" : ""}`} />
                     </button>
                   </div>
                   <button
                     onClick={handleRotateSessionKey}
-                    className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition-colors"
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border ${isDark ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border-zinc-700" : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"}`}
                   >
                     Rotate Ephemeral Key
                   </button>
@@ -1716,9 +1781,9 @@ export default function App() {
               </div>
 
               {/* Cryptographic RBAC Permissions */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                  <Shield className="w-4 h-4 text-violet-400" />
+              <div className={`p-5 rounded-xl border space-y-3 ${t.card}`}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                  <Shield className="w-4 h-4 text-violet-500" />
                   <span>Cryptographic RBAC Scopes Granted</span>
                 </h3>
                 <div className="flex flex-wrap gap-2 text-xs font-mono">
@@ -1734,7 +1799,7 @@ export default function App() {
                   ].map((scope) => (
                     <span
                       key={scope}
-                      className="px-2.5 py-1 rounded bg-[#09090b] text-violet-300 border border-violet-800/40"
+                      className={`px-2.5 py-1 rounded border ${isDark ? "bg-[#09090b] text-violet-300 border-violet-800/40" : "bg-violet-50 text-violet-700 border-violet-200"}`}
                     >
                       {scope}
                     </span>
@@ -1743,16 +1808,16 @@ export default function App() {
               </div>
 
               {/* Active Session Manager */}
-              <div className="p-5 rounded-xl bg-[#121215] border border-[#27272a] space-y-4">
+              <div className={`p-5 rounded-xl border space-y-4 ${t.card}`}>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-300 font-mono flex items-center space-x-2">
-                    <Clock className="w-4 h-4 text-violet-400" />
+                  <h3 className="text-xs font-semibold uppercase tracking-wider font-mono flex items-center space-x-2">
+                    <Clock className="w-4 h-4 text-violet-500" />
                     <span>Active Operator Sessions</span>
                   </h3>
                   {sessions.filter((s) => !s.isCurrent).length > 0 && (
                     <button
                       onClick={handleRevokeOtherSessions}
-                      className="text-xs text-rose-400 hover:text-rose-300 font-mono transition-colors"
+                      className="text-xs text-rose-500 hover:text-rose-600 font-mono transition-colors"
                     >
                       Revoke Other Sessions
                     </button>
@@ -1763,29 +1828,29 @@ export default function App() {
                   {sessions.map((sess) => (
                     <div
                       key={sess.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-[#09090b] border border-zinc-800"
+                      className={`flex items-center justify-between p-3 rounded-lg border ${t.cardSub}`}
                     >
                       <div className="flex items-center space-x-3">
                         <div
                           className={`w-2 h-2 rounded-full ${
-                            sess.isCurrent ? "bg-emerald-400" : "bg-zinc-600"
+                            sess.isCurrent ? "bg-emerald-500" : isDark ? "bg-zinc-600" : "bg-slate-400"
                           }`}
                         />
                         <div>
-                          <span className="text-zinc-200 font-semibold">{sess.device}</span>
-                          <div className="text-[10px] text-zinc-500">
+                          <span className="font-semibold">{sess.device}</span>
+                          <div className={`text-[10px] ${t.muted}`}>
                             {sess.ip} • {sess.client}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center space-x-3">
                         {sess.isCurrent ? (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold">
                             THIS CONSOLE
                           </span>
                         ) : (
                           <>
-                            <span className="text-[10px] text-zinc-500">{sess.activeTime}</span>
+                            <span className={`text-[10px] ${t.muted}`}>{sess.activeTime}</span>
                             <button
                               onClick={() => handleTerminateSession(sess.id)}
                               className="text-[10px] px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-900/60 transition-colors"
